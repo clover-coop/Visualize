@@ -1,0 +1,34 @@
+{
+	"models": {
+		"hexModule": { "size": "9,9,3.5", "type": "building", "path": "/Script/Engine.StaticMesh'/Game/Conditional/Buildings/Hex/HexModule/HexModule.HexModule'",
+			"materialPath": "/Script/Engine.Material'/Game/Conditional/Nature1/Wood/wood-pale-material.wood-pale-material'" },
+		"hexModuleBlock": { "size": "9,9,3.5", "type": "building", "path": "/Script/Engine.StaticMesh'/Game/Conditional/Buildings/Hex/HexModule/HexModule_LOD2.HexModule_LOD2'",
+			"materialPath": "/Script/Engine.Material'/Game/Conditional/Nature1/Wood/wood-pale-material.wood-pale-material'" },
+		"pineL": { "size": "29,25,64", "type": "tree", "path": "/Script/Engine.StaticMesh'/Game/Conditional/Nature1/Trees/Pine/Pine-L.Pine-L'" },
+		"pineM": { "size": "16,14,35", "type": "tree", "path": "/Script/Engine.StaticMesh'/Game/Conditional/Nature1/Trees/Pine/Pine-M.Pine-M'" },
+		"pineS": { "size": "12,12,19", "type": "tree", "path": "/Script/Engine.StaticMesh'/Game/Conditional/Nature1/Trees/Pine/Pine-S.Pine-S'" },
+		"rhododendron": { "size": "1.9,1.9,1.9", "type": "bush", "path": "/Script/Engine.StaticMesh'/Game/Conditional/Nature1/Bushes/Rhododendron/Rhododendron.Rhododendron'" },
+		"hazel": { "size": "3.6,3.8,1.5", "type": "bush", "path": "/Script/Engine.StaticMesh'/Game/Conditional/Nature1/Bushes/Hazel/Hazel.Hazel'" },
+		"cone": { "size": "1,1,1", "type": "primitive", "path": "/Script/Engine.StaticMesh'/Game/Modeling/Primitives/Cone.Cone'" },
+		"cube": { "size": "1,1,1", "type": "primitive", "path": "/Script/Engine.StaticMesh'/Game/Modeling/Primitives/Cube.Cube'" },
+		"cylinder": { "size": "1,1,1", "type": "primitive", "path": "/Script/Engine.StaticMesh'/Game/Modeling/Primitives/Cylinder.Cylinder'" },
+		"sphere": { "size": "1,1,1", "type": "primitive", "path": "/Script/Engine.StaticMesh'/Game/Modeling/Primitives/Sphere.Sphere'" },
+		"torus": { "size": "1,1,1", "type": "primitive", "path": "/Script/Engine.StaticMesh'/Game/Modeling/Primitives/Torus.Torus'" },
+		"roadRoundabout1": { "type": "primitive", "path": "/Script/Engine.StaticMesh'/Game/Landscape/Roundabout1.Roundabout1'" },
+		"roadSegment1": { "type": "primitive", "path": "/Script/Engine.StaticMesh'/Game/Landscape/RoadSegment1.RoadSegment1'" }
+	},
+	"materials": {
+		"wood": "/Script/Engine.Material'/Game/Conditional/Nature1/Wood/wood-pale-material.wood-pale-material'",
+		"black": "/Script/Engine.MaterialInstanceConstant'/Game/Material/Color/DynamicColor_M_Inst_Black.DynamicColor_M_Inst_Black'",
+		"blue": "/Script/Engine.MaterialInstanceConstant'/Game/Material/Color/DynamicColor_M_Inst_Blue.DynamicColor_M_Inst_Blue'",
+		"green": "/Script/Engine.MaterialInstanceConstant'/Game/Material/Color/DynamicColor_M_Inst_Green.DynamicColor_M_Inst_Green'",
+		"grey": "/Script/Engine.MaterialInstanceConstant'/Game/Material/Color/DynamicColor_M_Inst_Grey.DynamicColor_M_Inst_Grey'",
+		"orange": "/Script/Engine.MaterialInstanceConstant'/Game/Material/Color/DynamicColor_M_Inst_Orange.DynamicColor_M_Inst_Orange'",
+		"purple": "/Script/Engine.MaterialInstanceConstant'/Game/Material/Color/DynamicColor_M_Inst_Purple.DynamicColor_M_Inst_Purple'",
+		"red": "/Script/Engine.MaterialInstanceConstant'/Game/Material/Color/DynamicColor_M_Inst_Red.DynamicColor_M_Inst_Red'",
+		"white": "/Script/Engine.MaterialInstanceConstant'/Game/Material/Color/DynamicColor_M_Inst_White.DynamicColor_M_Inst_White'",
+		"yellow": "/Script/Engine.MaterialInstanceConstant'/Game/Material/Color/DynamicColor_M_Inst_Yellow.DynamicColor_M_Inst_Yellow'"
+	},
+	"textures": {
+	}
+}

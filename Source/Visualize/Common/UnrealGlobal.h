@@ -2,7 +2,7 @@
 
 #include <mutex>
 
-#include "../StructsActors/CommonStructsActor.h"
+#include "../StructsActors/DataStructsActor.h"
 // #include "../CanvasTextWidget.h"
 // #include "../GlobalActor.h"
 // #include "../SocketActor.h"

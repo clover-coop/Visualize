@@ -3,7 +3,7 @@
 #include "JsonObjectConverter.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "../StructsActors/CommonStructsActor.h"
+#include "../StructsActors/DataStructsActor.h"
 #include "../Common/DataConvert.h"
 // #include "../Landscape/HeightMap.h"
 // #include "../Landscape/SplineRoad.h"
