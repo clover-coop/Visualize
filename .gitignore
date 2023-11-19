@@ -6,12 +6,12 @@
 /Renders
 /Saved
 
-/*.xcworkspace
+*.xcworkspace
 
-/.ignore
-/.vscode
-/.vs
-/*.code-workspace
+*.ignore
+*.vscode
+*.vs
+*.code-workspace
 
 /Content/Conditional
 /Source/Conditional

@@ -34,6 +34,7 @@ public:
 	// void SetWidgets(UCanvasTextWidget* canvasTextWidget);
 	// void InitAll(UWorld*, TArray<FString> skipKeys = {});
 	bool InitSettings();
+	// FDataSettings* GetSettings();
 	// void InitCommon(UWorld*);
 	// void InitWeb(UWorld*);
 	// void InitMeshes(UWorld*);

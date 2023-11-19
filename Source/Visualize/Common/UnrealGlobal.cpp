@@ -68,6 +68,11 @@ bool UnrealGlobal::InitSettings() {
 	return valid;
 }
 
+// FDataSettings* UnrealGlobal::GetSettings() {
+// 	bool valid = InitSettings();
+// 	return _settings;
+// }
+
 // void UnrealGlobal::InitCommon(UWorld* World1) {
 // 	SetWorld(World1);
 

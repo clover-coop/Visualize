@@ -12,6 +12,7 @@ private:
 
     TSharedPtr<IWebSocket> _webSocket;
     bool _inited = false;
+    bool _connecting = false;
 	TMap<FString, std::function<void(FString)>> _listenersOn;
 	FString _rawMessageJoiner = "";
 

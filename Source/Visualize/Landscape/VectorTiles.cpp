@@ -2,6 +2,7 @@
 #include "JsonObjectConverter.h"
 
 #include "../Common/Lodash.h"
+#include "../Common/Socket.h"
 #include "../Common/UnrealGlobal.h"
 #include "../Draw/DrawVertices.h"
 // #include "./VerticesEdit.h"
@@ -31,43 +32,37 @@ void VectorTiles::Init() {
 }
 
 void VectorTiles::InitSocketOn() {
-	UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
+	Socket* socket = Socket::GetInstance();
 
-	this->DestroySocket();
+	// this->DestroySocket();
 	FString prefix = "VectorTiles";
-	// TODO - update for socket
-	// _socketKeys.Add(unrealGlobal->SocketActor->On(prefix, "get-vector-tiles", [this](FString DataString) {
-	// 	FDataGetVectorTiles* Data = new FDataGetVectorTiles();
-	// 	if (!FJsonObjectConverter::JsonObjectStringToUStruct(DataString, Data, 0, 0)) {
-	// 		UE_LOG(LogTemp, Error, TEXT("VectorTiles.On get-vector-tiles json parse error"));
-	// 	} else {
-	// 		if (Data->valid > 0) {
-	// 			// DrawVertices* drawVertices = DrawVertices::GetInstance();
-	// 			DrawVertices::LoadPolygons(Data->polygons);
-	// 			// verticesEdit->AddSimplified(Data->polygons);
-	// 			// for (int ii = 0; ii < Data->polygons.Num(); ii++) {
-	// 			// 	UE_LOG(LogTemp, Display, TEXT("polygon_id %s"), *Data->polygons[ii].uName);
-	// 			// }
-	// 			UE_LOG(LogTemp, Display, TEXT("added polygons"));
-	// 		}
-	// 	}
-	// }));
+	socket->On(prefix, "get-vector-tiles", [this](FString DataString) {
+		FDataGetVectorTiles* Data = new FDataGetVectorTiles();
+		if (!FJsonObjectConverter::JsonObjectStringToUStruct(DataString, Data, 0, 0)) {
+			UE_LOG(LogTemp, Error, TEXT("VectorTiles.On get-vector-tiles json parse error"));
+		} else {
+			if (Data->valid > 0) {
+				// DrawVertices::LoadPolygons(Data->polygons);
+				UE_LOG(LogTemp, Display, TEXT("added polygons"));
+			}
+		}
+	});
 }
 
-void VectorTiles::Destroy() {
-	this->DestroySocket();
-}
+// void VectorTiles::Destroy() {
+// 	this->DestroySocket();
+// }
 
-void VectorTiles::DestroySocket() {
-	// TODO
-	// UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
-    // unrealGlobal->SocketOffRoutes(_socketKeys);
-	_socketKeys.Empty();
-}
+// void VectorTiles::DestroySocket() {
+// 	UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
+//     unrealGlobal->SocketOffRoutes(_socketKeys);
+// 	_socketKeys.Empty();
+// }
 
 void VectorTiles::GetTiles(float lng, float lat, float xMeters, float yMeters) {
 	Init();
-    UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
+	Socket* socket = Socket::GetInstance();
+    // UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
 	// VerticesEdit* verticesEdit = VerticesEdit::GetInstance();
 	// verticesEdit->DestroyItems();
 	TMap<FString, FString> Data = {
@@ -76,6 +71,5 @@ void VectorTiles::GetTiles(float lng, float lat, float xMeters, float yMeters) {
         { "xMeters", Lodash::ToFixed(xMeters, 0) },
         { "yMeters", Lodash::ToFixed(yMeters, 0) },
 	};
-	// TODO
-	// unrealGlobal->SocketActor->Emit("get-vector-tiles", Data);
+	socket->Emit("get-vector-tiles", Data);
 }

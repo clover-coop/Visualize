@@ -10,7 +10,7 @@ private:
 	static VectorTiles *pinstance_;
 	static std::mutex mutex_;
 
-    TArray<FString> _socketKeys = {};
+    // TArray<FString> _socketKeys = {};
 	bool _inited = false;
 
 public:
@@ -24,7 +24,7 @@ public:
 
 	void Init();
     void InitSocketOn();
-    void Destroy();
-	void DestroySocket();
+    // void Destroy();
+	// void DestroySocket();
 	void GetTiles(float lng, float lat, float xMeters, float yMeters);
 };

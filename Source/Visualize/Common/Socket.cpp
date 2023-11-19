@@ -25,15 +25,18 @@ Socket *Socket::GetInstance() {
 }
 
 void Socket::Init() {
-    _inited = true;
-    InitSocket();
-    UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
-    unrealGlobal->InitSettings();
-    // unrealGlobal->GetSocket(GetWorld());
-    // unrealGlobal->SetInited("socket");
+    if (!_inited || (!_connecting && !IsConnected())) {
+        _inited = true;
+        UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
+        unrealGlobal->InitSettings();
+        InitSocket();
+        // unrealGlobal->GetSocket(GetWorld());
+        // unrealGlobal->SetInited("socket");
+    }
 }
 
 void Socket::InitSocket(bool closeSocket) {
+    _connecting = true;
 	if (!FModuleManager::Get().IsModuleLoaded("WebSockets")) {
 		FModuleManager::Get().LoadModule("WebSockets");
 	}
@@ -46,7 +49,8 @@ void Socket::InitSocket(bool closeSocket) {
 	FString Url = unrealGlobal->_settings->urlWebsocket;
 	_webSocket = FWebSocketsModule::Get().CreateWebSocket(Url);
 
-	_webSocket->OnConnected().AddLambda([]() {
+	_webSocket->OnConnected().AddLambda([this]() {
+        _connecting = false;
 		UE_LOG(LogTemp, Display, TEXT("Websocket connected"));
 	});
 	_webSocket->OnConnectionError().AddLambda([](const FString& Error) {
@@ -99,6 +103,7 @@ void Socket::Close() {
 }
 
 bool Socket::IsConnected() {
+    // Init();
 	return _webSocket && _webSocket->IsConnected();
 }
 
@@ -111,6 +116,7 @@ TMap<FString, FString> Socket::GetAuth() {
 }
 
 void Socket::Emit(FString Route, TMap<FString, FString> Data) {
+    Init();
 	FString JsonString;
 	FSocketData SendObj;
 	SendObj.Route = Route;
@@ -126,6 +132,7 @@ void Socket::Emit(FString Route, TMap<FString, FString> Data) {
 }
 
 FString Socket::On(FString RouteKeyPrefix, FString Route, std::function<void(FString)> Callback) {
+    Init();
 	FString RouteKey = RouteKeyPrefix + Route;
 	this->Off(RouteKey);
 	if (!_listenersOn.Contains(RouteKey)) {
@@ -137,6 +144,7 @@ FString Socket::On(FString RouteKeyPrefix, FString Route, std::function<void(FSt
 }
 
 void Socket::Off(FString RouteKey) {
+    Init();
 	if (_listenersOn.Contains(RouteKey)) {
 		_listenersOn.Remove(RouteKey);
 	}
