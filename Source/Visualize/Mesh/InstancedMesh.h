@@ -23,11 +23,11 @@ public:
 	// bool MeshExists(FString name);
 	void AddMesh(FString name, FString meshPath = "", FString materialPath = "",
 		FModelParams modelParams = FModelParams());
-	int CreateInstance(FString uName, FVector Translation, FRotator Rotation = FRotator(0,0,0), FVector Scale = FVector(1,1,1),
+	int CreateInstance(FString meshKey, FVector Translation, FRotator Rotation = FRotator(0,0,0), FVector Scale = FVector(1,1,1),
 		bool unrealScaleTranslation = true);
-	int UpdateInstance(FString uName, int, FVector Translation, FRotator Rotation = FRotator(0,0,0), FVector Scale = FVector(1,1,1),
+	int UpdateInstance(FString meshKey, int, FVector Translation, FRotator Rotation = FRotator(0,0,0), FVector Scale = FVector(1,1,1),
 		bool unrealScaleTranslation = true);
-	int SaveInstance(FString uName, int, FVector Translation, FRotator Rotation = FRotator(0,0,0), FVector Scale = FVector(1,1,1),
+	int SaveInstance(FString meshKey, int, FVector Translation, FRotator Rotation = FRotator(0,0,0), FVector Scale = FVector(1,1,1),
 		bool unrealScaleTranslation = true);
 	void ClearInstances(FString);
 	void ClearInstancesBulk(TArray<FString>);

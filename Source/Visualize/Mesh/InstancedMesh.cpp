@@ -4,6 +4,7 @@
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 
+#include "../Common/Lodash.h"
 #include "../Common/UnrealGlobal.h"
 #include "../Mesh/LoadContent.h"
 #include "../ProceduralModel/PMBase.h"
@@ -48,16 +49,18 @@ void InstancedMesh::CleanUp() {
 void InstancedMesh::Init() {
 	if (!_instancedMeshesActor || !IsValid(_instancedMeshesActor)) {
 		FString name = "InstancedMeshes";
+		UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
+		unrealGlobal->ClearActorsByNamePrefix(name);
 		ModelBase* modelBase = ModelBase::GetInstance();
 		PMBase* pmBase = PMBase::GetInstance();
 		FActorSpawnParameters spawnParams;
 		_instancedMeshesActor = modelBase->CreateActor(name, FVector(0,0,0), FVector(0,0,0),
-			FVector(1,1,1), spawnParams);
-	} else {
-		UE_LOG(LogTemp, Display, TEXT("InitMeshes actor still valid"));
-		// if (_instancedMeshesActor) {
-		// 	UE_LOG(LogTemp, Display, TEXT("pending?"), _instancedMeshesActor->IsPendingKill(), _instancedMeshesActor->HasAnyFlags(RF_BeginDestroyed));
-		// }
+			FVector(1,1,1), spawnParams, FModelParams());
+	// } else {
+	// 	UE_LOG(LogTemp, Display, TEXT("InitMeshes actor still valid"));
+	// 	// if (_instancedMeshesActor) {
+	// 	// 	UE_LOG(LogTemp, Display, TEXT("pending?"), _instancedMeshesActor->IsPendingKill(), _instancedMeshesActor->HasAnyFlags(RF_BeginDestroyed));
+	// 	// }
 	}
 }
 
@@ -94,14 +97,16 @@ void InstancedMesh::InitMeshes() {
 // }
 
 void InstancedMesh::AddMesh(FString name, FString meshPath, FString materialPath, FModelParams modelParams) {
+	Init();
 	if (!_instancedMeshActors.Contains(name)) {
-		AActor* actor;
-		// If recompile in editor, will not exist in memory, so need to check scene too.
 		UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
-		actor = unrealGlobal->GetActorByName(name, AActor::StaticClass());
-		if (actor) {
-			_instancedMeshActors.Add(name, actor);
-		} else {
+		AActor* actor;
+		// // If recompile in editor, will not exist in memory, so need to check scene too.
+		// actor = unrealGlobal->GetActorByName(name, AActor::StaticClass());
+		// if (actor) {
+		// 	_instancedMeshActors.Add(name, actor);
+		// } else {
+		if (true) {
 			UStaticMesh* mesh;
 			bool meshValid = false;
 			LoadContent* loadContent = LoadContent::GetInstance();
@@ -128,10 +133,12 @@ void InstancedMesh::AddMesh(FString name, FString meshPath, FString materialPath
 				// ModelBase* modelBase = ModelBase::GetInstance();
 				USceneComponent* meshesParent = _instancedMeshesActor->FindComponentByClass<USceneComponent>();
 				FActorSpawnParameters spawnParams;
-				spawnParams.Name = FName(name);
+				// Editor will crash if try to create with same name, even if it has been destroyed first.
+				FString nameInstanced = name + "_" + Lodash::GetInstanceId();
+				spawnParams.Name = FName(nameInstanced);
 				actor = (AActor*)World->SpawnActor<AActor>(
 					AActor::StaticClass(), FVector(0,0,0) * unrealGlobal->GetScale(), FRotator(0,0,0), spawnParams);
-				actor->SetActorLabel(name);
+				actor->SetActorLabel(nameInstanced);
 				_instancedMeshActors.Add(name, actor);
 
 				USceneComponent* parent = actor->FindComponentByClass<USceneComponent>();
@@ -189,6 +196,7 @@ void InstancedMesh::AddMesh(FString name, FString meshPath, FString materialPath
 
 int InstancedMesh::CreateInstance(FString meshKey, FVector Translation, FRotator Rotation, FVector Scale,
 	bool unrealScaleTranslation) {
+	Init();
 	int index = -1;
 	if (_instancedMeshActors.Contains(meshKey)) {
 		if (unrealScaleTranslation) {
@@ -201,6 +209,7 @@ int InstancedMesh::CreateInstance(FString meshKey, FVector Translation, FRotator
 }
 
 void InstancedMesh::ClearInstances(FString meshKey) {
+	Init();
 	if (_instancedMeshActors.Contains(meshKey)) {
 		UInstancedStaticMeshComponent* component = _instancedMeshActors[meshKey]->FindComponentByClass<UInstancedStaticMeshComponent>();
 		component->ClearInstances();
@@ -209,6 +218,7 @@ void InstancedMesh::ClearInstances(FString meshKey) {
 
 int InstancedMesh::UpdateInstance(FString meshKey, int instanceIndex, FVector Translation, FRotator Rotation,
 	FVector Scale, bool unrealScaleTranslation) {
+	Init();
 	int index = -1;
 	if (_instancedMeshActors.Contains(meshKey)) {
 		UInstancedStaticMeshComponent* component = _instancedMeshActors[meshKey]->FindComponentByClass<UInstancedStaticMeshComponent>();
@@ -227,6 +237,7 @@ int InstancedMesh::UpdateInstance(FString meshKey, int instanceIndex, FVector Tr
 
 int InstancedMesh::SaveInstance(FString meshKey, int instanceIndex, FVector Translation, FRotator Rotation,
 	FVector Scale, bool unrealScaleTranslation) {
+	Init();
 	if (instanceIndex < 0) {
 		return CreateInstance(meshKey, Translation, Rotation, Scale, unrealScaleTranslation);
 	}
@@ -234,6 +245,7 @@ int InstancedMesh::SaveInstance(FString meshKey, int instanceIndex, FVector Tran
 }
 
 bool InstancedMesh::RemoveInstances(FString meshKey, TArray<int> instanceIndices) {
+	Init();
 	if (_instancedMeshActors.Contains(meshKey) && instanceIndices.Num() > 0) {
 		UInstancedStaticMeshComponent* component = _instancedMeshActors[meshKey]->FindComponentByClass<UInstancedStaticMeshComponent>();
 		return component->RemoveInstances(instanceIndices);
@@ -242,6 +254,7 @@ bool InstancedMesh::RemoveInstances(FString meshKey, TArray<int> instanceIndices
 }
 
 void InstancedMesh::ClearInstancesBulk(TArray<FString> meshKeys) {
+	Init();
 	for (int ii = 0; ii < meshKeys.Num(); ii++) {
 		ClearInstances(meshKeys[ii]);
 	}

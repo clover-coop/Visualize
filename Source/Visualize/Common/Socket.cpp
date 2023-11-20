@@ -53,10 +53,12 @@ void Socket::InitSocket(bool closeSocket) {
         _connecting = false;
 		UE_LOG(LogTemp, Display, TEXT("Websocket connected"));
 	});
-	_webSocket->OnConnectionError().AddLambda([](const FString& Error) {
+	_webSocket->OnConnectionError().AddLambda([this](const FString& Error) {
+        _connecting = false;
 		UE_LOG(LogTemp, Error, TEXT("Websocket error %s"), *Error);
 	});
-	_webSocket->OnClosed().AddLambda([](int32 StatusCode, const FString& Reason, bool bWasClean) {
+	_webSocket->OnClosed().AddLambda([this](int32 StatusCode, const FString& Reason, bool bWasClean) {
+        _connecting = false;
 		UE_LOG(LogTemp, Warning, TEXT("Websocket closed %s"), *Reason);
 	});
 	_webSocket->OnMessage().AddLambda([this](const FString& MessageString) {

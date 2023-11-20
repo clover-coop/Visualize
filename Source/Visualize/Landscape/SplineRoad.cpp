@@ -43,9 +43,12 @@ void SplineRoad::SetWorld(UWorld* World1) {
 void SplineRoad::Init() {
 	if (_roadsActor == nullptr || !IsValid(_roadsActor)) {
 		FString name = "SplineRoads";
+		UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
+		unrealGlobal->ClearActorsByNamePrefix(name);
 		ModelBase* modelBase = ModelBase::GetInstance();
 		FActorSpawnParameters spawnParams;
-		_roadsActor = modelBase->CreateActor(name, FVector(0,0,0), FVector(0,0,0), FVector(1,1,1), spawnParams);
+		_roadsActor = modelBase->CreateActor(name, FVector(0,0,0), FVector(0,0,0), FVector(1,1,1),
+			spawnParams, FModelParams());
 	}
 }
 
@@ -85,6 +88,7 @@ void SplineRoad::CleanUp() {
 }
 
 void SplineRoad::AddRoads(TMap<FString, FPolygon> roadsPaths) {
+	Init();
 	for (auto& Elem : roadsPaths) {
 		FString UName = Elem.Key;
 		FString type = Elem.Value.type;
@@ -154,10 +158,11 @@ void SplineRoad::DrawRoads() {
 			materialKey = pairs.Contains("mat") ? pairs["mat"] : "asphalt";
 			modelParams.materialPath = loadContent->Material(materialKey);
 
-			spawnParams.Name = FName(UName);
+			FString nameInstanced = UName + "_" + Lodash::GetInstanceId();
+			spawnParams.Name = FName(nameInstanced);
 			actor = (AActor*)World->SpawnActor<AActor>(
 				AActor::StaticClass(), FVector(0,0,0) * unrealGlobal->GetScale(), FRotator(0,0,0), spawnParams);
-			actor->SetActorLabel(UName);
+			actor->SetActorLabel(nameInstanced);
 			_RoadsActors.Add(UName, actor);
 			parent = actor->FindComponentByClass<USceneComponent>();
 			parentObject = (UObject*)actor;

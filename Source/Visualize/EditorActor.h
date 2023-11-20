@@ -14,6 +14,8 @@ public:
 
 	UFUNCTION(CallInEditor)
 	void GetTiles();
+	UFUNCTION(CallInEditor)
+	void Clear();
 
 protected:
 	virtual void BeginPlay() override;

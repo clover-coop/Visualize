@@ -5,14 +5,14 @@
 
 #include "../StructsActors/DataStructsActor.h"
 #include "../Common/DataConvert.h"
-// #include "../Landscape/HeightMap.h"
-// #include "../Landscape/SplineRoad.h"
-// #include "../Landscape/VerticesEdit.h"
-// #include "../Mesh/InstancedMesh.h"
-// #include "../Mesh/LoadContent.h"
-// #include "../Modeling/ModelBase.h"
-// #include "../Move/MoveObject.h"
-// #include "../ProceduralModel/PMBase.h"
+#include "../Landscape/HeightMap.h"
+#include "../Landscape/SplineRoad.h"
+#include "../Landscape/VerticesEdit.h"
+#include "../Mesh/InstancedMesh.h"
+#include "../Mesh/LoadContent.h"
+#include "../Modeling/ModelBase.h"
+#include "../Move/MoveObject.h"
+#include "../ProceduralModel/PMBase.h"
 
 UnrealGlobal* UnrealGlobal::pinstance_{nullptr};
 std::mutex UnrealGlobal::mutex_;
@@ -34,6 +34,11 @@ UnrealGlobal *UnrealGlobal::GetInstance() {
 // void UnrealGlobal::SetWidgets(UCanvasTextWidget* canvasTextWidget) {
 // 	_canvasTextWidget = canvasTextWidget;
 // }
+
+void UnrealGlobal::Init(UWorld* World1) {
+	SetWorld(World1);
+	InitMeshes();
+}
 
 // void UnrealGlobal::InitAll(UWorld* World1, TArray<FString> skipKeys) {
 // 	SetWorld(World1);
@@ -119,24 +124,27 @@ bool UnrealGlobal::InitSettings() {
 
 FDataSettings* UnrealGlobal::Settings() {
 	if (!_settings) {
-		UE_LOG(LogTemp, Warning, TEXT("UnrealGlobal.Settings no settings"));
-		return nullptr;
+		InitSettings();
+		if (!_settings) {
+			UE_LOG(LogTemp, Warning, TEXT("UnrealGlobal.Settings no settings"));
+			return nullptr;
+		}
 	}
 	return _settings;
 }
 
-// void UnrealGlobal::InitMeshes(UWorld* World1) {
-// 	SetWorld(World1);
+void UnrealGlobal::InitMeshes() {
+	// SetWorld(World1);
 
-// 	// Must be after modelBase as uses that.
-// 	InstancedMesh* instancedMesh = InstancedMesh::GetInstance();
-// 	instancedMesh->SetWorld(World);
-// 	instancedMesh->InitMeshes();
+	// Must be after modelBase as uses that.
+	InstancedMesh* instancedMesh = InstancedMesh::GetInstance();
+	// instancedMesh->SetWorld(World);
+	instancedMesh->InitMeshes();
 
-// 	// Load from JSON too.
-// 	LoadContent* loadContent = LoadContent::GetInstance();
-// 	loadContent->LoadMeshes();
-// }
+	// Load from JSON too.
+	LoadContent* loadContent = LoadContent::GetInstance();
+	loadContent->LoadMeshes();
+}
 
 // void UnrealGlobal::SetInited(FString key) {
 // 	_initeds.Add(key, true);
@@ -151,33 +159,48 @@ FDataSettings* UnrealGlobal::Settings() {
 // 	return true;
 // }
 
-// void UnrealGlobal::CleanUp(TArray<FString> skipKeys) {
-// 	InstancedMesh* instancedMesh = InstancedMesh::GetInstance();
-// 	instancedMesh->CleanUp();
+void UnrealGlobal::CleanUp(TArray<FString> skipKeys) {
+	InstancedMesh* instancedMesh = InstancedMesh::GetInstance();
+	instancedMesh->CleanUp();
 
-// 	SplineRoad* splineRoad = SplineRoad::GetInstance();
-// 	splineRoad->CleanUp();
+	SplineRoad* splineRoad = SplineRoad::GetInstance();
+	splineRoad->CleanUp();
 
-// 	VerticesEdit* verticesEdit = VerticesEdit::GetInstance();
-//     verticesEdit->CleanUp();
+	VerticesEdit* verticesEdit = VerticesEdit::GetInstance();
+	verticesEdit->CleanUp();
 
-//     MoveObject* moveObject = MoveObject::GetInstance();
-//     moveObject->CleanUp();
+	MoveObject* moveObject = MoveObject::GetInstance();
+	moveObject->CleanUp();
 
-//     if (!skipKeys.Contains("socket") && IsValid(SocketActor)) {
-// 		SocketActor->Destroy();
-// 	}
-// 	_initeds.Empty();
-// 	_actors.Empty();
-// 	// World = nullptr;
-// 	_settings = nullptr;
-// 	SocketActor = nullptr;
-// 	_globalActor = nullptr;
-// 	_canvasTextWidget = nullptr;
-// }
+	ClearAllSpawned();
+
+	// if (!skipKeys.Contains("socket") && IsValid(SocketActor)) {
+	// 	SocketActor->Destroy();
+	// }
+	// SocketActor = nullptr;
+	// _initeds.Empty();
+	_actors.Empty();
+	// World = nullptr;
+	if (!skipKeys.Contains("settings")) {
+		_settings = nullptr;
+	}
+	// _globalActor = nullptr;
+	// _canvasTextWidget = nullptr;
+}
 
 void UnrealGlobal::SetWorld(UWorld* World1) {
 	World = World1;
+
+	HeightMap* heightMap = HeightMap::GetInstance();
+    heightMap->SetWorld(World1);
+	InstancedMesh* instancedMesh = InstancedMesh::GetInstance();
+	instancedMesh->SetWorld(World);
+	ModelBase* modelBase = ModelBase::GetInstance();
+	modelBase->SetWorld(World1);
+	PMBase* pmBase = PMBase::GetInstance();
+	pmBase->SetWorld(World1);
+    SplineRoad* splineRoad = SplineRoad::GetInstance();
+    splineRoad->SetWorld(World1);
 }
 
 UWorld* UnrealGlobal::GetWorld() {
@@ -199,6 +222,48 @@ void UnrealGlobal::SetActorFolder(AActor* actor, FString path) {
     } else {
     	UE_LOG(LogTemp, Warning, TEXT("UnrealGlobal.SetActorFolder actor invalid, skipping %s"), *path);
     }
+#endif
+}
+
+void UnrealGlobal::ClearAllSpawned() {
+#if WITH_EDITOR
+	ClearActorsByFolder("Spawned");
+#endif
+}
+
+void UnrealGlobal::ClearActorsByFolder(FString folderPath) {
+#if WITH_EDITOR
+	TSubclassOf<AActor> ActorClass = AActor::StaticClass();
+	AActor* actor = nullptr;
+	TArray<AActor*> OutActors;
+	FString currentPath;
+	UGameplayStatics::GetAllActorsOfClass(World, ActorClass, OutActors);
+	for (AActor* a : OutActors) {
+		if (a != nullptr) {
+			currentPath = a->GetFolderPath().ToString();
+			if (currentPath.Contains(folderPath, ESearchCase::CaseSensitive)) {
+				RemoveAttachedActors(a);
+				a->Destroy();
+			}
+		}
+	}
+#endif
+}
+
+void UnrealGlobal::ClearActorsByNamePrefix(FString namePrefix) {
+#if WITH_EDITOR
+	TSubclassOf<AActor> ActorClass = AActor::StaticClass();
+	AActor* actor = nullptr;
+	TArray<AActor*> OutActors;
+	FString nameTemp;
+	UGameplayStatics::GetAllActorsOfClass(World, ActorClass, OutActors);
+	for (AActor* a : OutActors) {
+		nameTemp = a->GetName();
+		if (nameTemp.StartsWith(namePrefix, ESearchCase::CaseSensitive)) {
+			RemoveAttachedActors(a);
+			a->Destroy();
+		}
+	}
 #endif
 }
 

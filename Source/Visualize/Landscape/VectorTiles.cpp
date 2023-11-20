@@ -42,7 +42,7 @@ void VectorTiles::InitSocketOn() {
 			UE_LOG(LogTemp, Error, TEXT("VectorTiles.On get-vector-tiles json parse error"));
 		} else {
 			if (Data->valid > 0) {
-				// DrawVertices::LoadPolygons(Data->polygons);
+				DrawVertices::LoadPolygons(Data->polygons);
 				UE_LOG(LogTemp, Display, TEXT("added polygons"));
 			}
 		}

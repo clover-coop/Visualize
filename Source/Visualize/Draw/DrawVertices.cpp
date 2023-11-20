@@ -30,7 +30,6 @@ DrawVertices::~DrawVertices() {
 }
 
 void DrawVertices::LoadPolygons(TArray<FPolygonSimplified> polygonsSimplified, bool destroyAll) {
-	// UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
 	VerticesEdit* verticesEdit = VerticesEdit::GetInstance();
 	if (destroyAll) {
 		verticesEdit->DestroyItems();
@@ -40,8 +39,14 @@ void DrawVertices::LoadPolygons(TArray<FPolygonSimplified> polygonsSimplified, b
 	for(int ii = 0; ii < polygonsSimplified.Num(); ii++) {
 		FPolygon polygon = ABuildingStructsActor::PolygonFromSimplified(polygonsSimplified[ii]);
 		verticesEdit->AddPolygon(polygon);
+		// TESTING - add back in
 		DrawPolygon(polygon);
+		// TESTING - remove
+		// InstancedMesh* instancedMesh = InstancedMesh::GetInstance();
+		// instancedMesh->CreateInstance("cube", polygon.vertices[0]);
+		// UE_LOG(LogTemp, Display, TEXT("polygon %s"), *polygon.uName);
 	}
+	// TESTING - add back in
 	SplineRoad* splineRoad = SplineRoad::GetInstance();
 	splineRoad->DrawRoads();
 }

@@ -212,11 +212,13 @@ FString ModelBase::CheckGetName(FString name, FString defaultName) {
 
 AStaticMeshActor* ModelBase::CreateActorEmpty(FString name, FModelParams modelParams) {
 	UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
-	// In case of recompile in editor, will lose reference so need to check scene too.
-	AActor* actor1 = unrealGlobal->GetActorByName(name, AStaticMeshActor::StaticClass());
-	if (actor1) {
-		return (AStaticMeshActor*)actor1;
-	}
+	// Make unique to avoid crash in editor from duplicate name, even if previously destroyed.
+	name = name + "_" + Lodash::GetInstanceId();
+	// // In case of recompile in editor, will lose reference so need to check scene too.
+	// AActor* actor1 = unrealGlobal->GetActorByName(name, AStaticMeshActor::StaticClass());
+	// if (actor1) {
+	// 	return (AStaticMeshActor*)actor1;
+	// }
 	FActorSpawnParameters spawnParams;
 	spawnParams.Name = FName(name);
 	AStaticMeshActor* actor = (AStaticMeshActor*)World->SpawnActor<AStaticMeshActor>(
@@ -238,15 +240,17 @@ AStaticMeshActor* ModelBase::CreateActorEmpty(FString name, FModelParams modelPa
 AStaticMeshActor* ModelBase::CreateActor(FString name, FVector location, FVector rotation,
 	FVector scale, FActorSpawnParameters spawnParams, FModelParams modelParams) {
 	UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
-	if (name == "") {
-		name = Lodash::GetInstanceId();
-	}
+	// if (name == "") {
+	// 	name = Lodash::GetInstanceId();
+	// }
+	// Make unique to avoid crash in editor from duplicate name, even if previously destroyed.
+	name = name + "_" + Lodash::GetInstanceId();
 
-	// In case of recompile in editor, will lose reference so need to check scene too.
-	AActor* actor1 = unrealGlobal->GetActorByName(name, AStaticMeshActor::StaticClass());
-	if (actor1) {
-		return (AStaticMeshActor*)actor1;
-	}
+	// // In case of recompile in editor, will lose reference so need to check scene too.
+	// AActor* actor1 = unrealGlobal->GetActorByName(name, AStaticMeshActor::StaticClass());
+	// if (actor1) {
+	// 	return (AStaticMeshActor*)actor1;
+	// }
 
 	FRotator rotator = FRotator(0,0,0);
 	if (rotation.X != 0 || rotation.Y != 0 || rotation.Z != 0) {
@@ -259,16 +263,26 @@ AStaticMeshActor* ModelBase::CreateActor(FString name, FVector location, FVector
 		modelParams.location.Y != 0 || modelParams.location.Z != 0)) {
 		location = modelParams.location;
 	}
+	if (World == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("ModelBase.CreateActor World is null, skipping %s"), *name);
+		return nullptr;
+	}
 	AStaticMeshActor* actor = (AStaticMeshActor*)World->SpawnActor<AStaticMeshActor>(
 		AStaticMeshActor::StaticClass(), location * unrealGlobal->GetScale(), rotator, spawnParams);
+	if (actor == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("ModelBase.CreateActor null actor, skipping %s"), *name);
+	}
 	_spawnedActors.Add(name, actor);
+	// FString folderPath = folder.Len() > 0 ? "Spawned/" + folder : "Spawned";
+	// UE_LOG(LogTemp, Display, TEXT("folderPath %s"), *folderPath);
+	// unrealGlobal->SetActorFolder(actor, folderPath);
 	unrealGlobal->SetActorFolder(actor);
+	// unrealGlobal->SetActorFolder(actor);
 	actor->SetActorLabel(name);
 	if (scale.X != 1 || scale.Y != 1 || scale.Z != 1) {
 		actor->SetActorScale3D(scale);
 	}
 
-	LoadContent* loadContent = LoadContent::GetInstance();
 	UStaticMeshComponent* meshComponent = actor->FindComponentByClass<UStaticMeshComponent>();
 	actor->SetRootComponent(meshComponent);
 

@@ -1,3 +1,7 @@
+## Notes
+
+- Unreal Bug? On Unreal 5.3, if you get a "missing modules" error when you try to open Unreal Editor, try unchecking the box to open the most recent project on startup; for some reason this always seems to fail, but if you go through the editor project page first and open the project that way, it works fine..
+
 ## Setup
 
 - Copy the `Source/ConditionalExample` folder and adjust for your content.
@@ -10,6 +14,7 @@
 			- This should update the landscape, but if it does not, to get the Landscape in Unreal Editor to actually reflect the changes, you must re-assign the (same) material to ALL proxy partions (select them all and change all at once).
 		- Re-import the heightmap in the Unreal Editor Landscape mode: 1. Select the Landscape in the Scene Outliner, 2. Choose the Landscape Mode from the (top left) dropdown, 3. Manage -> Import -> check Heightmap File -> select file -> Import
 			- Note: if you get an error on file selection, try moving the heightmap file to its own directory on your computer first so there are no other files in the same directory as it since Unreal sometimes errors otherwise.
+- Turn off Auto Save (content is dynamically generated so we do NOT want to save it). Manually save only the content you actually want to save (it should mostly be C++ source files).
 
 ### Mac
 - Build from Unreal Editor with the hotkey (button is missing..). Default is Command + Option + Shift + P which is annoying - go to viewport (top left 3 bars icon) -> Advanced Settings then search for `compile` and find the Keyboard Shortcuts section `Recompile Game Code` entry and set it to something simpler like Cmd+B.

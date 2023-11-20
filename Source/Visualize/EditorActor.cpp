@@ -18,7 +18,7 @@ void AEditorActor::GetTiles() {
 	UE_LOG(LogTemp, Display, TEXT("AEditorActor::GetTiles"));
 	// Socket* socket = Socket::GetInstance();
 	UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
-	unrealGlobal->SetWorld(GetWorld());
+	unrealGlobal->Init(GetWorld());
 	// if (socket->IsConnected()) {
 	// this->Login();
 	VectorTiles* vectorTiles = VectorTiles::GetInstance();
@@ -28,4 +28,11 @@ void AEditorActor::GetTiles() {
 	// } else {
 	// 	UE_LOG(LogTemp, Warning, TEXT("EditorActor.GetTiles socket not connected"));
 	// }
+}
+
+void AEditorActor::Clear() {
+	UnrealGlobal* unrealGlobal = UnrealGlobal::GetInstance();
+	// unrealGlobal->ClearActorsByNamePrefix("SplineRoad");
+	// unrealGlobal->ClearActorsByNamePrefix("InstMesh");
+	unrealGlobal->CleanUp();
 }
