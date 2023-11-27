@@ -650,8 +650,18 @@ FString VerticesEdit::GetParentPairsString(FString type, FString childUName) {
 // 	return countNew;
 // }
 
-void VerticesEdit::AddPolygon(FPolygon polygon) {
+FPolygon VerticesEdit::AddPolygon(FPolygon polygon, bool addHeight, float addHeightOffset) {
+	if (addHeight) {
+		HeightMap* heightMap = HeightMap::GetInstance();
+		polygon.posCenter.Z = heightMap->GetTerrainHeightAtPoint(FVector(polygon.posCenter.X, polygon.posCenter.Y, 0))
+			+ addHeightOffset;
+		for (int ii = 0; ii < polygon.vertices.Num(); ii++) {
+			polygon.vertices[ii].Z = heightMap->GetTerrainHeightAtPoint(FVector(polygon.vertices[ii].X, polygon.vertices[ii].Y, 0))
+				+ addHeightOffset;
+		}
+	}
 	_items.Add(polygon.uName, polygon);
+	return polygon;
 }
 
 void VerticesEdit::AddAndSave(TMap<FString, FPolygon> polygons) {

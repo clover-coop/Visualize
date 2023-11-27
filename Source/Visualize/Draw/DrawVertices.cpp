@@ -15,6 +15,7 @@
 #include "../Mesh/InstancedMesh.h"
 #include "../Mesh/LoadContent.h"
 #include "../Modeling/ModelBase.h"
+#include "../Modeling/Building/ModelBuilding.h"
 #include "../Modeling/Common/ModelCord.h"
 #include "../Modeling/Furniture/ModelDesk.h"
 #include "../Modeling/Furniture/ModelLight.h"
@@ -29,7 +30,8 @@ DrawVertices::DrawVertices() {
 DrawVertices::~DrawVertices() {
 }
 
-void DrawVertices::LoadPolygons(TArray<FPolygonSimplified> polygonsSimplified, bool destroyAll) {
+void DrawVertices::LoadPolygons(TArray<FPolygonSimplified> polygonsSimplified, bool destroyAll,
+	bool addHeight, float addHeightOffset) {
 	VerticesEdit* verticesEdit = VerticesEdit::GetInstance();
 	if (destroyAll) {
 		verticesEdit->DestroyItems();
@@ -38,15 +40,10 @@ void DrawVertices::LoadPolygons(TArray<FPolygonSimplified> polygonsSimplified, b
 	}
 	for(int ii = 0; ii < polygonsSimplified.Num(); ii++) {
 		FPolygon polygon = ABuildingStructsActor::PolygonFromSimplified(polygonsSimplified[ii]);
-		verticesEdit->AddPolygon(polygon);
-		// TESTING - add back in
+		polygon = verticesEdit->AddPolygon(polygon, addHeight, addHeightOffset);
+		UE_LOG(LogTemp, Display, TEXT("%s %s %s"), *polygon.uName, *polygon.type, *polygon.shape);
 		DrawPolygon(polygon);
-		// TESTING - remove
-		// InstancedMesh* instancedMesh = InstancedMesh::GetInstance();
-		// instancedMesh->CreateInstance("cube", polygon.vertices[0]);
-		// UE_LOG(LogTemp, Display, TEXT("polygon %s"), *polygon.uName);
 	}
-	// TESTING - add back in
 	SplineRoad* splineRoad = SplineRoad::GetInstance();
 	splineRoad->DrawRoads();
 }
@@ -109,6 +106,8 @@ void DrawVertices::DrawPolygon(FPolygon polygon) {
 			TMap<FString, FPolygon> polygonsTemp = {};
 			polygonsTemp.Add(polygon.uName, polygon);
 			splineRoad->AddRoads(polygonsTemp);
+		} else if (polygon.type == "building") {
+			ModelBuilding::Create(polygon.vertices);
 		} else {
 			meshNames = {};
 			if (pairs.Contains("meshTypes")) {

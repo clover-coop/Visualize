@@ -216,16 +216,18 @@ void SplineRoad::DrawRoads() {
 					pointCount += 1;
 				}
 
-				// Add roundabout.
-				// 0 digits to block overlap within 1 meter.
-				uNameRoundabout = "BuildingRoad_" + Lodash::ToFixed(vertices[vv].X, 0) + "_" + Lodash::ToFixed(vertices[vv].Y, 0);
-				if (!roundaboutUNames.Contains(uNameRoundabout)) {
-					// Move up a bit to cover roads.
-					FVector pos = vertices[vv];
-					pos.Z += 0.25;
+				if (pairs.Contains("addRoundabout")) {
+					// Add roundabout.
+					// 0 digits to block overlap within 1 meter.
+					uNameRoundabout = "BuildingRoad_" + Lodash::ToFixed(vertices[vv].X, 0) + "_" + Lodash::ToFixed(vertices[vv].Y, 0);
+					if (!roundaboutUNames.Contains(uNameRoundabout)) {
+						// Move up a bit to cover roads.
+						FVector pos = vertices[vv];
+						pos.Z += 0.25;
 
-					instancedMesh->CreateInstance("RoadRoundabout", pos, FRotator(0,Lodash::RandomRangeFloat(0,360),0), FVector(2,2,1.5));
-					roundaboutUNames.Add(uNameRoundabout);
+						instancedMesh->CreateInstance("RoadRoundabout", pos, FRotator(0,Lodash::RandomRangeFloat(0,360),0), FVector(2,2,1.5));
+						roundaboutUNames.Add(uNameRoundabout);
+					}
 				}
 
 				// Carve land (heightmap)

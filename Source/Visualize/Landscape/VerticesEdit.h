@@ -86,7 +86,7 @@ public:
 	void RemoveChildren(FString type, bool save = true);
 	FString GetParentPairsString(FString type, FString childUName);
 	// int CheckSubdividePolygons(FString type, bool save = true);
-	void AddPolygon(FPolygon polygon);
+	FPolygon AddPolygon(FPolygon polygon, bool addHeight = false, float addHeightOffset = 0.0f);
 	void AddAndSave(TMap<FString, FPolygon> polygons);
 	void SaveToFile(FString type);
 	void SavePolygon(FString uName);
