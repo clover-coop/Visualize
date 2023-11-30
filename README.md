@@ -1,5 +1,7 @@
 ## Notes
 
+- Unreal Bug? Without the Binaries folder, it fails to open (get "missing modules" and then fails to recompile).
+	- Download the Binaries here: https://drive.google.com/drive/u/0/folders/1pHFNsfbzw6TfkyJQV_7DtQhkd-IEZrrK
 - Unreal Bug? On Unreal 5.3, if you get a "missing modules" error when you try to open Unreal Editor, try unchecking the box to open the most recent project on startup; for some reason this always seems to fail, but if you go through the editor project page first and open the project that way, it works fine..
 
 ## Setup
