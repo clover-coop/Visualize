@@ -42,10 +42,17 @@ void VectorTiles::InitSocketOn() {
 			UE_LOG(LogTemp, Error, TEXT("VectorTiles.On get-vector-tiles json parse error"));
 		} else {
 			if (Data->valid > 0) {
-				// // Add 1 height offset otherwise roads are below ground.
-				// float heightOffset = 10.0f;
-				// DrawVertices::LoadPolygons(Data->polygons, true, true, heightOffset);
-				DrawVertices::LoadPolygons(Data->polygons);
+				UE_LOG(LogTemp, Display, TEXT("VectorTiles.On get-vector-tiles currentTile %d totalTiles %d polygons %d"),
+					Data->currentTile, Data->totalTiles, Data->polygons.Num());
+				if (Data->polygons.Num() > 0) {
+					// // Add 1 height offset otherwise roads are below ground.
+					// float heightOffset = 10.0f;
+					// DrawVertices::LoadPolygons(Data->polygons, true, true, heightOffset);
+					DrawVertices::LoadPolygons(Data->polygons);
+				}
+				// if (Data->currentTile >= Data->totalTiles) {
+				// 	DrawVertices::DrawAllPolygons();
+				// }
 			}
 		}
 	});

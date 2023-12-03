@@ -22,7 +22,12 @@ void AEditorActor::GetTiles() {
 	VectorTiles* vectorTiles = VectorTiles::GetInstance();
 	float lng = -122.033802;
 	float lat = 37.977362;
-	vectorTiles->GetTiles(lng, lat, 125, 125);
+	float meters = 500;
+	meters = 1250;
+	meters = 2500;
+	meters = 2000;
+	meters = 250;
+	vectorTiles->GetTiles(lng, lat, meters, meters);
 }
 
 void AEditorActor::Clear() {

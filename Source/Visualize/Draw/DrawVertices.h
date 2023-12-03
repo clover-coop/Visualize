@@ -8,8 +8,9 @@ public:
 	DrawVertices();
 	~DrawVertices();
 
-	static void LoadPolygons(TArray<FPolygonSimplified> polygonsSimplified, bool destroyAll = true,
+	static void LoadPolygons(TArray<FPolygonSimplified> polygonsSimplified, bool destroyAll = false,
 		bool addHeight = true, float addHeightOffset = 0.0f);
 	static void DrawPolygon(FPolygon polygon);
+	// static void DrawAllPolygons();
 	static void LoadVertices(TArray<FString> skipTypes = {});
 };

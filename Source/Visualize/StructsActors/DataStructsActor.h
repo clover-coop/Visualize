@@ -97,6 +97,10 @@ struct FDataGetVectorTiles {
 	FString msg;
 	UPROPERTY()
 	TArray<FPolygonSimplified> polygons;
+	UPROPERTY()
+	int currentTile;
+	UPROPERTY()
+	int totalTiles;
 };
 
 USTRUCT()

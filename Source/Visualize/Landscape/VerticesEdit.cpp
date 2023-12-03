@@ -660,7 +660,11 @@ FPolygon VerticesEdit::AddPolygon(FPolygon polygon, bool addHeight, float addHei
 				+ addHeightOffset;
 		}
 	}
-	_items.Add(polygon.uName, polygon);
+	if (_items.Contains(polygon.uName)) {
+		_items[polygon.uName] = polygon;
+	} else {
+		_items.Add(polygon.uName, polygon);
+	}
 	return polygon;
 }
 

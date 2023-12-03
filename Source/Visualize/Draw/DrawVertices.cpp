@@ -41,7 +41,7 @@ void DrawVertices::LoadPolygons(TArray<FPolygonSimplified> polygonsSimplified, b
 	for(int ii = 0; ii < polygonsSimplified.Num(); ii++) {
 		FPolygon polygon = ABuildingStructsActor::PolygonFromSimplified(polygonsSimplified[ii]);
 		polygon = verticesEdit->AddPolygon(polygon, addHeight, addHeightOffset);
-		UE_LOG(LogTemp, Display, TEXT("%s %s %s"), *polygon.uName, *polygon.type, *polygon.shape);
+		// UE_LOG(LogTemp, Display, TEXT("%s %s %s"), *polygon.uName, *polygon.type, *polygon.shape);
 		DrawPolygon(polygon);
 	}
 	SplineRoad* splineRoad = SplineRoad::GetInstance();
@@ -107,7 +107,15 @@ void DrawVertices::DrawPolygon(FPolygon polygon) {
 			polygonsTemp.Add(polygon.uName, polygon);
 			splineRoad->AddRoads(polygonsTemp);
 		} else if (polygon.type == "building") {
-			ModelBuilding::Create(polygon.vertices);
+			// ModelBuilding::Create(polygon.vertices);
+			// TODO - instanced meshes are WAY (seconds vs minutes) faster than custom meshes.
+			location = polygon.vertices[0];
+			pairs.Add("loc", DataConvert::VectorToString(location));
+			meshKey = "cube";
+			auto [location1, rotation, scale] = ModelBase::PairsToTransform(pairs);
+			scale = FVector(10, 10, 10);
+			instancedMesh->CreateInstance(meshKey, location,
+				DataConvert::VectorToRotator(rotation), scale);
 		} else {
 			meshNames = {};
 			if (pairs.Contains("meshTypes")) {
@@ -175,6 +183,14 @@ void DrawVertices::DrawPolygon(FPolygon polygon) {
 		}
 	}
 }
+
+// void DrawVertices::DrawAllPolygons() {
+// 	VerticesEdit* verticesEdit = VerticesEdit::GetInstance();
+// 	TMap<FString, FPolygon> polygons = verticesEdit->FilterByTypes({ "road" });
+// 	SplineRoad* splineRoad = SplineRoad::GetInstance();
+// 	splineRoad->AddRoads(polygons);
+// 	splineRoad->DrawRoads();
+// }
 
 void DrawVertices::LoadVertices(TArray<FString> skipTypes) {
 	skipTypes += { "train" };
