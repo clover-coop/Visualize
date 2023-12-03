@@ -10,6 +10,7 @@
 *.ignore
 *.vscode
 *.vs
+*.vsconfig
 *.code-workspace
 
 /Content/Conditional
