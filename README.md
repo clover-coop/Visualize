@@ -3,13 +3,17 @@
 - Unreal Bug? Without the Binaries folder, it fails to open (get "missing modules" and then fails to recompile).
 	- Download the Binaries here: https://drive.google.com/drive/u/0/folders/1pHFNsfbzw6TfkyJQV_7DtQhkd-IEZrrK
 - Unreal Bug? On Unreal 5.3, if you get a "missing modules" error when you try to open Unreal Editor, try unchecking the box to open the most recent project on startup; for some reason this always seems to fail, but if you go through the editor project page first and open the project that way, it works fine..
+- If get "missing modules" or "unable to compile" follow this: https://www.youtube.com/watch?v=6mFhtvdYQWI
+	- Basically: delete the generated folders and build in Visual Studio to see and fix errors.
+	- Note: Visual Studio only available for Windows, so if not on Windows, can try with Visual Studio Code, but it is more complicated and is probably easier to get a working version (Binaries folder) from someone else on your platform.
+- If get any errors, logs are crucial; look in `Saved/Logs/Visualize.log` to see actual error then debug and fix.
 
 ## Setup
 
 - Copy the `Source/ConditionalExample` folder and adjust for your content.
 	- Create a new folder for your project / assets and add this path to `settings.json`
 	- Add content (meshes and materials) to `Content/Conditional` and update `contentMeshes.json` to reference them.
-	- Copy `CCDefines.h` to `Source/GCPlan/CCDefines.h` and modify accordingly.
+	- Copy `CCDefines.h` to `Source/Visualize/CCDefines.h` and modify accordingly.
 	- Landscape (this currently has to be manually set in the project editor - TODO: fix this so it is auto-updated via code and can live in the conditional project folder so changing `settings.json` will be all that is necessary.)
 		- add `image-terrain.jpg` and a 16-bit grayscale `image-heightmap.png` to the root of the `Source/Conditional` folder
 		- add `image-terrain-[size].jpg` to the `Content/Conditional/Landscape` (sub)folder
@@ -57,7 +61,7 @@
 
 ### Include Third Party Code
 - https://georgy.dev/posts/third-party-integration/
-	- Have to update `GCPlan.Build.cs` with both `PublicAdditionalLibraries` and `PublicIncludePaths`
+	- Have to update `Visualize.Build.cs` with both `PublicAdditionalLibraries` and `PublicIncludePaths`
 
 ### (Git) Workflow
 - `git pull origin main` to get up to date code, then `git checkout -b [branch]` to create a new branch for your work.
